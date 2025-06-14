@@ -1,0 +1,19 @@
+## Fisiere Visual Studio
+.vs/
+*.user
+*.suo
+
+## Build
+bin/
+obj/
+out/
+
+## Setari IDE
+*.log
+*.db
+*.DS_Store
+.vscode/
+
+## Sensitive
+.env
+secrets.json
