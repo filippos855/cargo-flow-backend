@@ -13,36 +13,17 @@ namespace cargo_flow_backend.Validators
 
             RuleFor(p => p.Cnp)
                 .NotEmpty().WithMessage("CNP-ul este obligatoriu.")
-                .Must(cnp => cnp.Trim().Length == 13 && cnp.All(char.IsDigit))
-                .WithMessage("CNP-ul trebuie să conțină exact 13 cifre.");
+                .Matches(@"^\d{13}$").WithMessage("CNP-ul trebuie să conțină exact 13 cifre.");
 
             RuleFor(p => p.Email)
-                .Cascade(CascadeMode.Stop)
-                .Must(email => string.IsNullOrWhiteSpace(email) || IsValidEmail(email))
+                .MaximumLength(100).WithMessage("Email-ul nu poate depăși 100 de caractere.")
+                .EmailAddress().When(e => !string.IsNullOrWhiteSpace(e.Email))
                 .WithMessage("Adresa de email nu este validă.");
 
             RuleFor(p => p.Phone)
-                .Cascade(CascadeMode.Stop)
-                .Must(phone => string.IsNullOrWhiteSpace(phone) || IsValidPhone(phone))
+                .MaximumLength(20).WithMessage("Telefonul nu poate depăși 20 de caractere.")
+                .Matches(@"^[0-9+\-\s]+$").When(p => !string.IsNullOrWhiteSpace(p.Phone))
                 .WithMessage("Numărul de telefon nu este valid.");
-        }
-
-        private bool IsValidEmail(string? email)
-        {
-            try
-            {
-                var addr = new System.Net.Mail.MailAddress(email!);
-                return addr.Address == email;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private bool IsValidPhone(string? phone)
-        {
-            return System.Text.RegularExpressions.Regex.IsMatch(phone!, @"^[0-9+\-\s]+$");
         }
     }
 }

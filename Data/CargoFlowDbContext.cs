@@ -1,14 +1,12 @@
-﻿using cargo_flow_backend.Entities;
+﻿// CargoFlowDbContext.cs - configurat complet cu Fluent API
+using cargo_flow_backend.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace cargo_flow_backend.Data
 {
     public class CargoFlowDbContext : DbContext
     {
-        public CargoFlowDbContext(DbContextOptions<CargoFlowDbContext> options)
-            : base(options)
-        {
-        }
+        public CargoFlowDbContext(DbContextOptions<CargoFlowDbContext> options) : base(options) { }
 
         public DbSet<Person> Persons { get; set; }
         public DbSet<Company> Companies { get; set; }
@@ -22,118 +20,105 @@ namespace cargo_flow_backend.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // DictionaryItem <-> Dictionary
-            modelBuilder.Entity<DictionaryItem>()
-                .HasOne(di => di.Dictionary)
-                .WithMany(d => d.Items)
-                .HasForeignKey(di => di.DictionaryId)
-                .OnDelete(DeleteBehavior.Cascade);
+            // === Company ===
+            modelBuilder.Entity<Company>(entity =>
+            {
+                entity.Property(c => c.Name).IsRequired().HasMaxLength(100);
+                entity.Property(c => c.Code).IsRequired().HasMaxLength(20);
+                entity.Property(c => c.Cui).HasMaxLength(10);
+                entity.Property(c => c.Address).HasMaxLength(200);
 
-            // Order - Trip
-            modelBuilder.Entity<Order>()
-                .HasOne(o => o.Trip)
-                .WithMany(t => t.Orders)
-                .OnDelete(DeleteBehavior.SetNull);
+                entity.HasOne(c => c.ContactPerson)
+                      .WithMany(p => p.ContactForCompanies)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
 
-            // Order - Company
-            modelBuilder.Entity<Order>()
-                .HasOne(o => o.Company)
-                .WithMany(c => c.Orders)
-                .OnDelete(DeleteBehavior.Restrict);
+            // === Dictionary ===
+            modelBuilder.Entity<Dictionary>(entity =>
+            {
+                entity.Property(d => d.Name).IsRequired().HasMaxLength(100);
+            });
 
-            // Order - DeliveryPerson
-            modelBuilder.Entity<Order>()
-                .HasOne(o => o.DeliveryPerson)
-                .WithMany(p => p.DeliveryOrders)
-                .OnDelete(DeleteBehavior.Restrict);
+            // === DictionaryItem ===
+            modelBuilder.Entity<DictionaryItem>(entity =>
+            {
+                entity.Property(di => di.Name).IsRequired().HasMaxLength(100);
+                entity.HasOne(di => di.Dictionary)
+                      .WithMany(d => d.Items)
+                      .HasForeignKey(di => di.DictionaryId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
 
-            // Order - Status
-            modelBuilder.Entity<Order>()
-                .HasOne(o => o.Status)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Restrict);
+            // === FleetVehicle ===
+            modelBuilder.Entity<FleetVehicle>(entity =>
+            {
+                entity.Property(fv => fv.Identifier).IsRequired().HasMaxLength(50);
+                entity.Property(fv => fv.ItpExpiration).IsRequired();
+                entity.Property(fv => fv.RcaExpiration).IsRequired();
+                entity.HasOne(fv => fv.Type).WithMany();
+            });
 
-            // Invoice - Order
-            modelBuilder.Entity<Invoice>()
-                .HasOne(i => i.Order)
-                .WithMany(o => o.Invoices)
-                .OnDelete(DeleteBehavior.SetNull);
+            // === Invoice ===
+            modelBuilder.Entity<Invoice>(entity =>
+            {
+                entity.Property(i => i.Number).IsRequired().HasMaxLength(50);
+                entity.Property(i => i.IssueDate).IsRequired();
+                entity.Property(i => i.DueDate).IsRequired();
+                entity.Property(i => i.Amount).HasPrecision(18, 2);
+                entity.Property(i => i.Currency).IsRequired().HasMaxLength(10);
 
-            // Invoice - Trip
-            modelBuilder.Entity<Invoice>()
-                .HasOne(i => i.Trip)
-                .WithMany(t => t.Invoices)
-                .OnDelete(DeleteBehavior.SetNull);
+                entity.HasOne(i => i.InvoiceType).WithMany().OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(i => i.Status).WithMany().OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(i => i.Company).WithMany(c => c.Invoices).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(i => i.Order).WithMany(o => o.Invoices).OnDelete(DeleteBehavior.SetNull);
+                entity.HasOne(i => i.Trip).WithMany(t => t.Invoices).OnDelete(DeleteBehavior.SetNull);
+            });
 
-            // Invoice - Company
-            modelBuilder.Entity<Invoice>()
-                .HasOne(i => i.Company)
-                .WithMany(c => c.Invoices)
-                .OnDelete(DeleteBehavior.Restrict);
+            // === Order ===
+            modelBuilder.Entity<Order>(entity =>
+            {
+                entity.Property(o => o.Number).IsRequired().HasMaxLength(50);
+                entity.Property(o => o.CreatedDate).IsRequired();
+                entity.Property(o => o.Address).IsRequired().HasMaxLength(200);
 
-            // Invoice - Status
-            modelBuilder.Entity<Invoice>()
-                .HasOne(i => i.Status)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(o => o.Company).WithMany(c => c.Orders).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(o => o.DeliveryPerson).WithMany(p => p.DeliveryOrders).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(o => o.Status).WithMany().OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(o => o.Trip).WithMany(t => t.Orders).OnDelete(DeleteBehavior.SetNull);
+            });
 
-            // Invoice - Type
-            modelBuilder.Entity<Invoice>()
-                .HasOne(i => i.InvoiceType)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Restrict);
+            // === Person ===
+            modelBuilder.Entity<Person>(entity =>
+            {
+                entity.Property(p => p.FullName).IsRequired().HasMaxLength(100);
+                entity.Property(p => p.Cnp).IsRequired().HasMaxLength(13);
+                entity.Property(p => p.Phone).HasMaxLength(20);
+                entity.Property(p => p.Email).HasMaxLength(100);
+            });
 
-            modelBuilder.Entity<Invoice>()
-            .Property(i => i.Amount)
-            .HasPrecision(18, 2);
+            // === Trip ===
+            modelBuilder.Entity<Trip>(entity =>
+            {
+                entity.Property(t => t.Number).IsRequired().HasMaxLength(50);
+                entity.Property(t => t.StartDate).IsRequired();
 
-            // Trip - TransportCompany
-            modelBuilder.Entity<Trip>()
-                .HasOne(t => t.TransportCompany)
-                .WithMany(c => c.TransportedTrips)
-                .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(t => t.Status).WithMany().OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(t => t.TransportCompany).WithMany(c => c.TransportedTrips).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(t => t.Driver).WithMany(p => p.DrivenTrips).OnDelete(DeleteBehavior.SetNull);
+                entity.HasOne(t => t.TractorUnit).WithMany(f => f.AsTractorUnitInTrips).OnDelete(DeleteBehavior.NoAction);
+                entity.HasOne(t => t.Trailer).WithMany(f => f.AsTrailerInTrips).OnDelete(DeleteBehavior.SetNull);
+            });
 
-            // Trip - Driver
-            modelBuilder.Entity<Trip>()
-                .HasOne(t => t.Driver)
-                .WithMany(p => p.DrivenTrips)
-                .OnDelete(DeleteBehavior.SetNull);
+            // === User ===
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.Property(u => u.Username).IsRequired().HasMaxLength(50);
+                entity.Property(u => u.PasswordHash).IsRequired();
+                entity.Property(u => u.IsActive).HasDefaultValue(true);
 
-            // Trip - TractorUnit
-            modelBuilder.Entity<Trip>()
-                .HasOne(t => t.TractorUnit)
-                .WithMany(f => f.AsTractorUnitInTrips)
-                .OnDelete(DeleteBehavior.NoAction);
-
-            // Trip - Trailer
-            modelBuilder.Entity<Trip>()
-                .HasOne(t => t.Trailer)
-                .WithMany(f => f.AsTrailerInTrips)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            // Trip - Status
-            modelBuilder.Entity<Trip>()
-                .HasOne(t => t.Status)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // Company - ContactPerson
-            modelBuilder.Entity<Company>()
-                .HasOne(c => c.ContactPerson)
-                .WithMany(p => p.ContactForCompanies)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // User - Role
-            modelBuilder.Entity<User>()
-                .HasOne(u => u.Role)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // User - Person
-            modelBuilder.Entity<User>()
-                .HasOne(u => u.Person)
-                .WithMany(p => p.Users)
-                .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(u => u.Role).WithMany().OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(u => u.Person).WithMany(p => p.Users).OnDelete(DeleteBehavior.Restrict);
+            });
 
             base.OnModelCreating(modelBuilder);
         }

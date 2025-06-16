@@ -29,14 +29,31 @@ namespace cargo_flow_backend.Services
                     (c.Cui != null && c.Cui.ToLower().Contains(search)));
             }
 
-            if (query.Sort == "name")
+            companies = query.Sort switch
             {
-                companies = query.Direction == "asc" ? companies.OrderBy(c => c.Name) : companies.OrderByDescending(c => c.Name);
-            }
-            else if (query.Sort == "code")
-            {
-                companies = query.Direction == "asc" ? companies.OrderBy(c => c.Code) : companies.OrderByDescending(c => c.Code);
-            }
+                "name" => query.Direction == "asc"
+                    ? companies.OrderBy(c => c.Name)
+                    : companies.OrderByDescending(c => c.Name),
+
+                "code" => query.Direction == "asc"
+                    ? companies.OrderBy(c => c.Code)
+                    : companies.OrderByDescending(c => c.Code),
+
+                "cui" => query.Direction == "asc"
+                    ? companies.OrderBy(c => c.Cui)
+                    : companies.OrderByDescending(c => c.Cui),
+
+                "address" => query.Direction == "asc"
+                    ? companies.OrderBy(c => c.Address)
+                    : companies.OrderByDescending(c => c.Address),
+
+                "contactPerson" => query.Direction == "asc"
+                    ? companies.OrderBy(c => c.ContactPerson.FullName)
+                    : companies.OrderByDescending(c => c.ContactPerson.FullName),
+
+                _ => companies.OrderBy(c => c.Name) // default
+            };
+
 
             int total = await companies.CountAsync();
             var items = await companies

@@ -12,8 +12,8 @@ using cargo_flow_backend.Data;
 namespace cargo_flow_backend.Migrations
 {
     [DbContext(typeof(CargoFlowDbContext))]
-    [Migration("20250615173203_UpdateRelationshipsFixed")]
-    partial class UpdateRelationshipsFixed
+    [Migration("20250616201149_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,7 +46,8 @@ namespace cargo_flow_backend.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Cui")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -247,10 +248,12 @@ namespace cargo_flow_backend.Migrations
 
                     b.Property<string>("Cnp")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("FullName")
                         .IsRequired()
@@ -258,7 +261,8 @@ namespace cargo_flow_backend.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
 
@@ -323,7 +327,9 @@ namespace cargo_flow_backend.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()

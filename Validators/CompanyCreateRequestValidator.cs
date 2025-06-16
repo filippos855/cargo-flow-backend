@@ -16,14 +16,14 @@ namespace cargo_flow_backend.Validators
                 .MaximumLength(20).WithMessage("Codul nu poate depăși 20 de caractere.");
 
             RuleFor(c => c.Cui)
-                .Cascade(CascadeMode.Stop)
-                .Must(cui => string.IsNullOrWhiteSpace(cui) || System.Text.RegularExpressions.Regex.IsMatch(cui, @"^\d{8,10}$"))
-                .WithMessage("CUI-ul trebuie să conțină între 8 și 10 cifre.");
+                .MaximumLength(10).WithMessage("CUI-ul nu poate depăși 10 caractere.")
+                .Matches(@"^\d{6,10}$").When(c => !string.IsNullOrWhiteSpace(c.Cui))
+                .WithMessage("CUI-ul trebuie să conțină între 6 și 10 cifre.");
 
             RuleFor(c => c.Address)
                 .MaximumLength(200).WithMessage("Adresa nu poate depăși 200 de caractere.");
 
-            RuleFor(c => c.ContactPersonId)
+            RuleFor(c => c.ContactPerson.Id)
                 .GreaterThan(0).WithMessage("Trebuie să selectezi o persoană de contact.");
         }
     }

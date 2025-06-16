@@ -38,7 +38,7 @@ namespace cargo_flow_backend.Controllers
         [HttpPost]
         public async Task<ActionResult<CompanyDto>> CreateCompany([FromBody] CompanyCreateRequest request)
         {
-            var person = await _personService.GetEntityByIdAsync(request.ContactPersonId);
+            var person = await _personService.GetEntityByIdAsync(request.ContactPerson.Id);
             if (person == null) return BadRequest("Persoană de contact invalidă.");
 
             var company = request.ToEntity(person);
@@ -56,7 +56,7 @@ namespace cargo_flow_backend.Controllers
             var company = await _companyService.GetEntityByIdAsync(id);
             if (company == null) return NotFound();
 
-            var person = await _personService.GetEntityByIdAsync(request.ContactPersonId);
+            var person = await _personService.GetEntityByIdAsync(request.ContactPerson.Id);
             if (person == null) return BadRequest("Persoană de contact invalidă.");
 
             request.UpdateEntity(company, person);

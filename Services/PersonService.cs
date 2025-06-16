@@ -28,18 +28,26 @@ namespace cargo_flow_backend.Services
                     (p.Cnp != null && p.Cnp.ToLower().Contains(search)));
             }
 
-            if (query.Sort == "fullName")
+            persons = query.Sort switch
             {
-                persons = query.Direction == "asc"
+                "fullName" => query.Direction == "asc"
                     ? persons.OrderBy(p => p.FullName)
-                    : persons.OrderByDescending(p => p.FullName);
-            }
-            else if (query.Sort == "cnp")
-            {
-                persons = query.Direction == "asc"
+                    : persons.OrderByDescending(p => p.FullName),
+
+                "cnp" => query.Direction == "asc"
                     ? persons.OrderBy(p => p.Cnp)
-                    : persons.OrderByDescending(p => p.Cnp);
-            }
+                    : persons.OrderByDescending(p => p.Cnp),
+
+                "phone" => query.Direction == "asc"
+                    ? persons.OrderBy(p => p.Phone)
+                    : persons.OrderByDescending(p => p.Phone),
+
+                "email" => query.Direction == "asc"
+                    ? persons.OrderBy(p => p.Email)
+                    : persons.OrderByDescending(p => p.Email),
+
+                _ => persons.OrderBy(p => p.FullName)
+            };
 
             int total = await persons.CountAsync();
 
