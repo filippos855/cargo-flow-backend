@@ -16,7 +16,6 @@ namespace cargo_flow_backend.Entities
 
         public bool IsAvailable { get; set; }
 
-
         public ICollection<Trip>? AsTractorUnitInTrips { get; set; }
         public ICollection<Trip>? AsTrailerInTrips { get; set; }
     }

@@ -22,6 +22,8 @@ builder.Services.AddDbContext<CargoFlowDbContext>(options =>
 // ? Services
 builder.Services.AddScoped<PersonService>();
 builder.Services.AddScoped<CompanyService>();
+builder.Services.AddScoped<FleetVehicleService>();
+builder.Services.AddScoped<DictionaryItemService>();
 
 // ? CORS - pentru Angular frontend
 builder.Services.AddCors(options =>
