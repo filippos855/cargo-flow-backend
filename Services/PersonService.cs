@@ -102,10 +102,19 @@ namespace cargo_flow_backend.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
         public async Task<Person?> GetEntityByIdAsync(int id)
         {
             return await _context.Persons.FindAsync(id);
         }
 
+        public async Task<List<PersonDto>> GetAllPersons()
+        {
+            var persons = await _context.Persons
+                .OrderBy(p => p.FullName)
+                .ToListAsync();
+
+            return persons.Select(p => p.ToDto()).ToList();
+        }
     }
 }

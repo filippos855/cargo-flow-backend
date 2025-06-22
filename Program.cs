@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // ? Add controllers and FluentValidation support
 builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidatorsFromAssemblyContaining<Program>(); // încarc? to?i validatorii
+builder.Services.AddValidatorsFromAssemblyContaining<Program>(); // încarca toti validatorii
 
 // ? Swagger & API docs
 builder.Services.AddEndpointsApiExplorer();
@@ -24,6 +24,7 @@ builder.Services.AddScoped<PersonService>();
 builder.Services.AddScoped<CompanyService>();
 builder.Services.AddScoped<FleetVehicleService>();
 builder.Services.AddScoped<DictionaryItemService>();
+builder.Services.AddScoped<UserService>();
 
 // ? CORS - pentru Angular frontend
 builder.Services.AddCors(options =>

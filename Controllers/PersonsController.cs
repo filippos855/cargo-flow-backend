@@ -87,5 +87,12 @@ namespace cargo_flow_backend.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+
+        [HttpGet("all")]
+        public async Task<ActionResult<List<PersonDto>>> GetAllPersons()
+        {
+            var persons = await _personService.GetAllPersons();
+            return Ok(persons);
+        }
     }
 }

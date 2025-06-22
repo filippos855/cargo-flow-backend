@@ -113,7 +113,7 @@ namespace cargo_flow_backend.Data
             modelBuilder.Entity<User>(entity =>
             {
                 entity.Property(u => u.Username).IsRequired().HasMaxLength(50);
-                entity.Property(u => u.PasswordHash).IsRequired();
+                entity.Property(u => u.Password).IsRequired();
                 entity.Property(u => u.IsActive).HasDefaultValue(true);
 
                 entity.HasOne(u => u.Role).WithMany().OnDelete(DeleteBehavior.Restrict);

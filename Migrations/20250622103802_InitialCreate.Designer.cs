@@ -12,7 +12,7 @@ using cargo_flow_backend.Data;
 namespace cargo_flow_backend.Migrations
 {
     [DbContext(typeof(CargoFlowDbContext))]
-    [Migration("20250616201149_InitialCreate")]
+    [Migration("20250622103802_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -331,7 +331,7 @@ namespace cargo_flow_backend.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
-                    b.Property<string>("PasswordHash")
+                    b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
