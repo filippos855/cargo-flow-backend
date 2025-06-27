@@ -105,5 +105,10 @@ namespace cargo_flow_backend.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<int> CountActiveAsync()
+        {
+            return await _context.Companies.CountAsync();
+        }
     }
 }

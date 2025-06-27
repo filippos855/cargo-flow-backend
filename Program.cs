@@ -1,32 +1,31 @@
 using cargo_flow_backend.Data;
 using cargo_flow_backend.Services;
+using CargoFlow.Backend.Services;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ? Add controllers and FluentValidation support
 builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidatorsFromAssemblyContaining<Program>(); // încarca toti validatorii
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
-// ? Swagger & API docs
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// ? EF Core DBContext
-builder.Services.AddDbContext<CargoFlowDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<CargoFlowDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// ? Services
 builder.Services.AddScoped<PersonService>();
 builder.Services.AddScoped<CompanyService>();
 builder.Services.AddScoped<FleetVehicleService>();
 builder.Services.AddScoped<DictionaryItemService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<OrderService>();
+builder.Services.AddScoped<TripService>();
+builder.Services.AddScoped<InvoiceService>();
+builder.Services.AddScoped<DashboardService>();
 
-// ? CORS - pentru Angular frontend
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
@@ -40,7 +39,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// ? Middleware pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

@@ -107,5 +107,16 @@ namespace cargo_flow_backend.Services
             _context.FleetVehicles.Remove(vehicle);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<int> CountItpExpiringInDaysAsync(int days)
+        {
+            var now = DateTime.Now;
+            var until = now.AddDays(days);
+
+            return await _context.FleetVehicles
+                .Where(f => f.ItpExpiration >= now && f.ItpExpiration <= until)
+                .CountAsync();
+        }
+
     }
 }

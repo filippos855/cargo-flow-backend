@@ -12,7 +12,7 @@ using cargo_flow_backend.Data;
 namespace cargo_flow_backend.Migrations
 {
     [DbContext(typeof(CargoFlowDbContext))]
-    [Migration("20250622103802_InitialCreate")]
+    [Migration("20250625162858_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

@@ -8,6 +8,9 @@ namespace cargo_flow_backend.Mappings
     {
         public static PersonDto ToDto(this Person person)
         {
+            if (person == null)
+                return null;
+
             return new PersonDto
             {
                 Id = person.Id,

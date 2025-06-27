@@ -1,5 +1,4 @@
-﻿// CargoFlowDbContext.cs - configurat complet cu Fluent API
-using cargo_flow_backend.Entities;
+﻿using cargo_flow_backend.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace cargo_flow_backend.Data

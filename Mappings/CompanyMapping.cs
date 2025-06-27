@@ -1,4 +1,5 @@
-﻿using cargo_flow_backend.Entities;
+﻿using System;
+using cargo_flow_backend.Entities;
 using cargo_flow_backend.Models.Requests;
 using cargo_flow_backend.Models.Responses;
 
@@ -8,6 +9,12 @@ namespace cargo_flow_backend.Mappings
     {
         public static CompanyDto ToDto(this Company company)
         {
+            if (company == null)
+                return null;
+
+            if (company.ContactPerson == null)
+                return null;
+
             return new CompanyDto
             {
                 Id = company.Id,

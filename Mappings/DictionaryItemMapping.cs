@@ -5,8 +5,14 @@ namespace cargo_flow_backend.Mappings
 {
     public static class DictionaryItemMapping
     {
-        public static DictionaryItemDto ToDto(this DictionaryItem item)
+        public static DictionaryItemDto? ToDto(this DictionaryItem? item)
         {
+            if (item == null)
+                return null;
+
+            if (item.Dictionary == null)
+                throw new InvalidOperationException("Dictionary nu poate fi null pentru DictionaryItem " + item.Id);
+
             return new DictionaryItemDto
             {
                 Id = item.Id,
@@ -17,6 +23,7 @@ namespace cargo_flow_backend.Mappings
                     Name = item.Dictionary.Name
                 }
             };
+
         }
     }
 }

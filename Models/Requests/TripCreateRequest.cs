@@ -1,30 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using cargo_flow_backend.Entities;
 
-namespace cargo_flow_backend.Entities
+namespace cargo_flow_backend.Models.Requests
 {
-    public class Trip
+    public class TripCreateRequest
     {
-        public int Id { get; set; }
-
         public string Number { get; set; } = string.Empty;
-
         public DateTime StartDate { get; set; }
-
         public DateTime? EndDate { get; set; }
-
         public DictionaryItem Status { get; set; } = null!;
-
         public Company TransportCompany { get; set; } = null!;
-
         public Person? Driver { get; set; }
-
         public FleetVehicle? TractorUnit { get; set; }
-
         public FleetVehicle? Trailer { get; set; }
-
-        public ICollection<Order> Orders { get; set; } = new List<Order>();
-
-        public ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
-
+        public List<Order>? Orders { get; set; }
     }
 }

@@ -8,6 +8,9 @@ namespace cargo_flow_backend.Mappings
     {
         public static FleetVehicleDto ToDto(this FleetVehicle vehicle)
         {
+            if (vehicle == null)
+                return null;
+
             return new FleetVehicleDto
             {
                 Id = vehicle.Id,
